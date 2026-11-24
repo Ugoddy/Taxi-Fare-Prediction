@@ -103,6 +103,30 @@ python -m pytest -v   # 11 tests
 
 ---
 
+## Web app (Streamlit)
+
+`streamlit_app.py` is a web page where anyone can price a trip without writing code:
+
+- Choose pickup and dropoff from 12 well-known NYC places, including Times Square, Wall Street and the JFK, LaGuardia and Newark airports, or enter custom coordinates
+- Set the date (2009 to 2015), the time and the number of passengers
+- See both points on a map, then click **Predict fare**
+- The sidebar shows the model's accuracy and its limits
+
+The app sends each trip to the FastAPI service and shows the fare it returns (**Streamlit → FastAPI → model**), the same set-up used in production systems.
+
+Run both, in two terminals:
+
+```bash
+# Terminal 1: the API
+python -m uvicorn main:app --reload --port 8001
+
+# Terminal 2: the web app
+python -m streamlit run streamlit_app.py --server.port 8502
+# open http://localhost:8502
+```
+
+---
+
 ## Repository contents
 
 | File | What it is |
@@ -114,6 +138,7 @@ python -m pytest -v   # 11 tests
 | `train_fare.csv` / `test_fare.csv` | Training data and test trips |
 | `predictions.csv` | Predicted fares for the 9,914 test trips |
 | `main.py` | FastAPI prediction service |
+| `streamlit_app.py` | Streamlit web app |
 | `tests/test_api.py` | 11 automated API tests |
 | `requirements.txt` | Python dependencies |
 | `images/` | Charts and screenshots used in this README |
@@ -150,7 +175,7 @@ print(f"Predicted fare: ${model.predict(trip)[0]:.2f}")          # about $7.00
 
 - [x] Notebook: cleaning, features, model comparison, saved pipeline
 - [x] FastAPI prediction service (11 automated tests passing)
-- [ ] Streamlit web app
+- [x] Streamlit web app (calls the FastAPI service)
 - [ ] Docker container
 - [ ] CI/CD with GitHub Actions (tests + Docker build)
 - [ ] Deployment on AWS
@@ -160,7 +185,7 @@ print(f"Predicted fare: ${model.predict(trip)[0]:.2f}")          # about $7.00
 
 ## Tech stack
 
-Python · pandas · NumPy · scikit-learn · Matplotlib · Jupyter · FastAPI · pytest. Next: Streamlit · Docker · GitHub Actions · AWS · Databricks
+Python · pandas · NumPy · scikit-learn · Matplotlib · Jupyter · FastAPI · pytest · Streamlit. Next: Docker · GitHub Actions · AWS · Databricks
 
 ## Related project
 
