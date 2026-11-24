@@ -86,8 +86,8 @@ with st.sidebar:
         st.caption("Random Forest trained on 1M+ NYC taxi trips (2009–2015), "
                    "tested on 103,315 trips it never saw.")
         low, high = info["training_fare_range"]
-        st.caption(f"Training fares range from ${low:.2f} to ${high:.2f}, "
-                   "so the model can't predict fares above about $30.")
+        st.caption(f"Training fares range from \\${low:.2f} to \\${high:.2f}, "
+                   "so the model can't predict fares above about \\$30.")
     else:
         st.error(f"Can't reach the API at {API_URL}. Start it with:\n\n"
                  "`python -m uvicorn main:app --port 8001`")
@@ -138,8 +138,8 @@ if st.button("Predict fare", type="primary"):
                 km = result["trip_distance_km"]
                 c2.metric("Straight-line distance", f"{km:.1f} km ({km * 0.621:.1f} miles)")
                 if result.get("note"):
-                    st.info(result["note"])
-                st.caption("Typical error is about ±$1.45. Distance is measured as the crow flies; "
+                    st.info(result["note"].replace("$", "\\$"))
+                st.caption("Typical error is about ±\\$1.45. Distance is measured as the crow flies; "
                            "the real route is longer.")
             else:
                 st.error(error_message(response))
