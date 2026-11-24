@@ -17,3 +17,6 @@ env/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Test cache
+.pytest_cache/

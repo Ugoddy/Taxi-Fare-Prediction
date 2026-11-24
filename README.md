@@ -63,6 +63,46 @@ The models were tested on **103,315 trips they never saw during training**.
 
 ---
 
+## Prediction API (FastAPI)
+
+`main.py` serves the model as a web API.
+
+| Endpoint | What it does |
+|---|---|
+| `GET /` | Welcome message |
+| `GET /health` | Confirms the app is running and the model loaded |
+| `GET /model-info` | Model scores and valid input ranges |
+| `POST /predict` | Send a trip, get the predicted fare |
+
+Example request to `POST /predict`:
+
+```json
+{
+  "pickup_longitude": -73.9855, "pickup_latitude": 40.7580,
+  "dropoff_longitude": -73.9772, "dropoff_latitude": 40.7527,
+  "passenger_count": 1, "pickup_datetime": "2013-03-05T09:30:00"
+}
+```
+
+Response:
+
+```json
+{ "predicted_fare": 7.0, "currency": "USD", "trip_distance_km": 0.91, "note": null }
+```
+
+The API rejects trips it can't price reliably, returning a clear `422` error: locations outside New York, fewer than 1 or more than 6 passengers, dates outside 2009 to 2015, or the same pickup and dropoff point. For trips near the $30 limit of the training data, it adds a note that the real fare may be higher.
+
+Run it locally:
+
+```bash
+pip install -r requirements.txt
+python -m uvicorn main:app --reload --port 8001
+# open http://127.0.0.1:8001/docs
+python -m pytest -v   # 11 tests
+```
+
+---
+
 ## Repository contents
 
 | File | What it is |
@@ -73,7 +113,10 @@ The models were tested on **103,315 trips they never saw during training**.
 | `taxi_config.json` | Input columns, valid ranges, metrics and the scikit-learn version |
 | `train_fare.csv` / `test_fare.csv` | Training data and test trips |
 | `predictions.csv` | Predicted fares for the 9,914 test trips |
-| `images/` | Charts used in this README |
+| `main.py` | FastAPI prediction service |
+| `tests/test_api.py` | 11 automated API tests |
+| `requirements.txt` | Python dependencies |
+| `images/` | Charts and screenshots used in this README |
 
 ---
 
@@ -106,7 +149,7 @@ print(f"Predicted fare: ${model.predict(trip)[0]:.2f}")          # about $7.00
 ## Roadmap
 
 - [x] Notebook: cleaning, features, model comparison, saved pipeline
-- [ ] FastAPI prediction service
+- [x] FastAPI prediction service (11 automated tests passing)
 - [ ] Streamlit web app
 - [ ] Docker container
 - [ ] CI/CD with GitHub Actions (tests + Docker build)
@@ -117,7 +160,7 @@ print(f"Predicted fare: ${model.predict(trip)[0]:.2f}")          # about $7.00
 
 ## Tech stack
 
-Python · pandas · NumPy · scikit-learn · Matplotlib · Jupyter. Next: FastAPI · Streamlit · Docker · GitHub Actions · AWS · Databricks
+Python · pandas · NumPy · scikit-learn · Matplotlib · Jupyter · FastAPI · pytest. Next: Streamlit · Docker · GitHub Actions · AWS · Databricks
 
 ## Related project
 
